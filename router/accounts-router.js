@@ -28,19 +28,20 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
     const accData = req.body;
     db('accounts')
-        .insert(accData)
-        .then(acc => res.status(201).json(acc))
+        .insert(accData, "id")
+        .then(id => res.status(201).json( id ))
         .catch(err => console.log(err))
 })
 
 router.put('/:id', (req, res) => {
     const { id } = req.params;
     const changes = req.body;
+    console.log(id, changes);
     db('accounts')
-        .where('id', id)
+        .where({ id })
         .update(changes)
         .then(count => {
-            if (count > 0) {
+            if (count.length > 0) {
                 res.status(200).json({ data: count })
             } else {
                 res.status(404).json({
@@ -73,6 +74,7 @@ router.use((error, req, res, next) => {
         message: 'there was an error',
         error
     })
+    next();
 })
 
 module.exports = router;
